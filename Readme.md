@@ -1,0 +1,1 @@
+Projekt wieloosobowej popularnej gry karcianej Blackjack przy uzyciu node.js + socket.io.
