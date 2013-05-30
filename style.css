@@ -1,0 +1,167 @@
+body {
+    margin-top: 40px;
+    background-color: #303026;
+}
+
+#stolik { 
+    position: absolute;
+    left: 100px;
+    right: 100px;
+    width: 900px;
+    height: 550px;
+    margin: auto;
+    background-color: #1C7A21;
+    border: 10px solid brown; 
+}
+
+#miejsceKrupiera {
+    position: absolute;
+    left: 400px;
+    top: 80px;
+    width: 110px;
+    height: 125px;
+}
+
+#nazwaKrupiera {
+    position: absolute;
+    bottom: -25px;   
+    left: 15px;
+    -moz-border-radius: 20px 0;
+    border-radius: 20px 0;
+    background-color: #B9411A;
+    width: 80px;
+    height: 20px;
+    color: white;
+    text-align: center;
+}
+
+.wartoscRekiKrupiera {
+    position: absolute;
+    bottom: 170px;
+    background-color: #9F9B94;
+    border-radius: 20px 20px 20px 20px;
+    width: 110px;
+    height: 20px;
+    text-align: center;
+    color: black;
+    display: none;
+}
+
+#miejsceGracza1 {
+    position: absolute;
+    left: 700px;
+    bottom: 80px;
+    width: 110px;
+    height: 125px;
+}
+
+#miejsceGracza2 { 
+    position: absolute;
+    left: 500px;
+    bottom: 80px;
+    width: 110px;
+    height: 125px;
+}
+
+#miejsceGracza3 {
+    position: absolute;
+    left: 300px;
+    bottom: 80px;    
+    width: 110px;
+    height: 125px;
+}
+
+#miejsceGracza4 {
+    position: absolute;
+    left: 100px;
+    bottom: 80px;
+    width: 110px;
+    height: 125px;
+}
+
+#nazwaGracza {
+    position: absolute;
+    bottom: -25px;   
+    left: 15px;
+    -moz-border-radius: 0px 20px;
+    border-radius: 0px 20px;
+    background-color: #05B4A8;
+    width: 80px;
+    height: 20px;
+    color: white;
+    text-align: center;
+}
+
+.zetonyGracza {
+    background-color: #A03B3B;
+    border-radius: 10px 10px 10px 10px;
+    bottom: -50px;
+    color: black;
+    display: none;
+    height: 20px;
+    position: absolute;
+    text-align: center;
+    width: 110px;
+}
+
+.stawkaGracza {
+    background-color: #00FF11;
+    border-radius: 50%;
+    bottom: -20px;
+    color: black;
+    display: none;
+    height: 30px;
+    left: 100px;
+    line-height: 2;
+    position: absolute;
+    text-align: center;
+    width: 30px;
+}
+
+.wartoscRekiGracza {
+    background-color: #9F9B94;
+    border-radius: 20px 20px 20px 20px;
+    bottom: -75px;
+    color: black;
+    display: none;
+    height: 20px;
+    position: absolute;
+    text-align: center;
+    width: 110px;
+}
+
+#guzikiStawka {
+    position: absolute;
+    bottom: -45px;
+    width: 180px;
+}
+
+#guzikiOpcje {
+    position: absolute;
+    bottom: -45px;
+    left: 350px;
+    width: 250px;
+}
+
+#informacje {
+    position: absolute;
+    bottom: 250px;
+    width: 900px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.usiadzButton{
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    height: 20px;
+}
+
+.pozaGraButton{
+    position: absolute;
+    left: 10px;
+    bottom: 20px;
+    height: 20px;
+    display: none; 
+}

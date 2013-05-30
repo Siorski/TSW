@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Blackjack</title>
+        <link rel="stylesheet" type="text/css" href="http://sigma.ug.edu.pl/~ksiora/blackjack/bootstrap.css" >
+        <link rel="stylesheet" type="text/css" href="http://sigma.ug.edu.pl/~ksiora/blackjack/style.css" >
+        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/jquery-1.9.1.js"></script>
+        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/socket.io.js"></script>
+    </head>
+
+    <body>
+        <div id="stolik">
+            <div id="miejsceKrupiera">
+                <div id="nazwaKrupiera">Krupier</div>
+                <div class="wartoscRekiKrupiera"></div>
+            </div>
+            <div id="miejsceGracza1">
+                <div class="btn usiadzButton btn-primary">Usiądź</div>
+                <div class="btn pozaGraButton btn-info  disabled">Poza gra...</div>
+                <div id="nazwaGracza">Gracz 1</div>
+                <div class="zetonyGracza"></div>
+                <div class="stawkaGracza"></div>
+                <div class="wartoscRekiGracza"></div>
+            </div>
+            <div id="miejsceGracza2">
+                <div class="btn usiadzButton btn-primary">Usiądź</div>
+                <div class="btn pozaGraButton btn-info  disabled">Poza gra...</div>
+                <div id="nazwaGracza">Gracz 2</div>
+                <div class="zetonyGracza"></div>
+                <div class="stawkaGracza"></div>
+                <div class="wartoscRekiGracza"></div>
+            </div>
+            <div id="miejsceGracza3">
+                <div class="btn usiadzButton btn-primary">Usiądź</div>
+                <div class="btn pozaGraButton btn-info  disabled">Poza gra...</div>
+                <div id="nazwaGracza">Gracz 3</div>
+                <div class="zetonyGracza"></div>
+                <div class="stawkaGracza"></div>
+                <div class="wartoscRekiGracza"></div>
+            </div>
+            <div id="miejsceGracza4">
+                <div class="btn usiadzButton btn-primary">Usiądź</div>
+                <div class="btn pozaGraButton btn-info  disabled">Poza gra...</div>
+                <div id="nazwaGracza">Gracz 4</div>
+                <div class="zetonyGracza"></div>
+                <div class="stawkaGracza"></div>
+                <div class="wartoscRekiGracza"></div>
+            </div>
+             <div id="informacje"> Witamy w grze Blackjack. Kliknij usiądź aby zająć miejsce.</div>
+                <div id="guzikiStawka">
+                    <button id="stawkaMinus" class="btn btn-danger">-</button>
+                    <button id="obstawButton" data-stawkaOgolna="5" class="btn btn-primary" >Stawka 5 </button>
+                    <button id="stawkaPlus" class="btn btn-success">+</button>
+                </div>
+                <div id="guzikiOpcje">
+                    <button id="hit" class="btn btn-primary">Hit</button>
+                    <button id="pas" class="btn btn-warning">Pas</button>
+                    <button id="doubledown" class="btn btn-primary">DoubleDown</button>
+                </div>
+        </div>
+        <script>
+            var IDClientGlobal = -1;
+            var socket = io.connect('http://localhost:8080');
+
+            socket.on('id', function(data) {
+                IDClientGlobal = data.id;
+            });  
+        </script>
+    </body>
+</html>
