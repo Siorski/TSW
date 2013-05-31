@@ -16,6 +16,8 @@ var server = http.createServer(function(request, response) {
  }).listen(8080);
 
 var io = require("socket.io").listen(server);
+karty = require('./scripts/karty.js'); //dostep do funkcji w skrypcie karty.js (mozliwy dzieki module.exports)
+karty.nowaTalia(); //tworzymy karty do gry
 
 io.sockets.on('connection', function(socket) {
     socket.emit('id', {
