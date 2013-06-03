@@ -36,5 +36,14 @@ io.sockets.on('connection', function(socket) {
             }
             io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
         }
+    });
+
+    socket.on('zapytanieObstaw', function(data) {
+        if(cyklGry.aktualnyKrok.ustalStawke(data)) { // jesli udalo sie ustalic stawke w aktualnym kroku
+            if(!cyklGry.porzadekTrwa) { //jesli porzadek jest zatrzymany to
+                cyklGry.porzadekStart(io); //startujemy go od nowa
+            } 
+            io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
+        }
     });    
 });

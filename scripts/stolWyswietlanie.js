@@ -1,7 +1,8 @@
 function wyswietlStol() {
-    wyswietlanieGuzikow();
+    wyswietlanieInformacji();    
     wyswietlanieZetonow();
-    wyswietlanieInformacji();
+    wyswietlanieGuzikow();
+    wyswietlanieStawek();
 }
 
 function wyswietlanieInformacji() {
@@ -36,3 +37,14 @@ function wyswietlanieGuzikow() {
     });
 }
 
+function wyswietlanieStawek() {
+    $(".stawkaGracza").each(function(index) { //przechodzimy przez wszystkie divy stawkiGraczy
+        if(stolGlobal.stawkaGracza[index + 1] === 0) { //jesli stawka jest rowna 0
+            $(this).hide(); // nie pokazujemy jej
+        } 
+        else {
+            $(this).show(); //w przeciwnym wypadku wyswietlamy stawke
+            $(this).text(stolGlobal.stawkaGracza[index + 1]);
+        }
+    });
+}

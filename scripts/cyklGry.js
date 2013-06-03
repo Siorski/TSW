@@ -36,7 +36,7 @@ module.exports = {
         return this.aktualnyKrok;
     },
 
-    ustalCzasCzekania: function() {
+    pobierzCzasCzekania: function() { //pobieramy
         return this.aktualnyKrok.czasCzekania;
     },
 
@@ -50,7 +50,7 @@ module.exports = {
         if(this.porzadekTrwa){ // jesli porzadek trwa
             setTimeout(function() {
                 cyklGry.przejdzDoNastepnegoKroku();
-            }, cyklGry.ustalCzasCzekania() );  //metoda setTimeout wykona funkcje (podana jako pierwszy parametr) czekajac okreslona ilosc czasu (podana jako drugi parametr)
+            }, cyklGry.pobierzCzasCzekania() );  //metoda setTimeout wykona funkcje (podana jako pierwszy parametr) czekajac okreslona ilosc czasu (podana jako drugi parametr)
         }
         this.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
     },
@@ -69,7 +69,7 @@ module.exports = {
 
     aktualnyKrok: {},
     kroki: { //tablica z krokami w porzadku
-        czekanieNaGraczy: { 
+        czekanieNaGraczy: {  //pierwszy krok
             poczatekKroku: function() {},
             koniecKroku: function() {},
             ustalStawke: function() {},
@@ -80,7 +80,37 @@ module.exports = {
             pas: function() {},
             doubleDown: function() {},
             wiadomosc: "Proszę zajmować miejsca przy stole.",
-            czasCzekania: 5000         
+            czasCzekania: 5000  // ten krok trwa 5 sekund
+        },
+
+        przyjmowanieStawek: { //drugi krok
+            obstawianieStawekZegar: 0,
+            usunGraczyPoCzasie: function() {
+                stol.usunWszystkichGraczy(); //po uplywie 30 sekund wszystkich usuwamy ze stolu i 
+                stol.resetStolu(); //resetujemy wszystkie wlasciwosci stolu
+                cyklGry.porzadekReset(); // oraz porzadek
+                cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
+                console.log("Przekroczono czas na przyjmowanie stawek. Usunięto wszystkich graczy.")
+            },
+            poczatekKroku: function() {},
+            koniecKroku: function() {
+                if(stol.graczePozaGra() && (stol.graczePozaGra() === stol.iloscGraczy)) { //jesli wszyscy gracze nie biora udzialu w rozdaniu
+                    cyklGry.porzadekPauza(); //zatrzymujemy porzadek
+                    cyklGry.aktualnyKrok.obstawianieStawekZegar = setTimeout(this.usunGraczyPoCzasie, 30000); // po 30 sekundach usuwani sa wszyscy gracze
+                }
+            },
+            ustalStawke: function(data) {
+                if(stol.ustalStawke(data["clientID"], data["stawka"])) {
+                    clearTimeout(cyklGry.aktualnyKrok.obstawianieStawekZegar); //jesli udalo sie ustalic stawke to zerujemy zegar
+                    return 1;
+                }
+            },
+            dodajGracza: function() {}, //dodawanie graczy w tym kroku nie jest mozliwe
+            hit: function() {}, //podobnie jak wszystkie akcje z kartami
+            pas: function() {},
+            doubleDown: function() {},
+            wiadomosc: "Postaw swoją stawkę.",
+            czasCzekania: 10000 //ten krok trwa 10 sekund
         }
     }
 };

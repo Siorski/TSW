@@ -14,6 +14,13 @@ $("#stawkaMinus").click(function(){
     $('#obstawButton').data('stawkaogolna', temp);
 });
 
+$("#obstawButton").click(function() {
+    var data = {};
+    data["stawka"] = $('#obstawButton').data('stawkaogolna');
+    data["clientID"] = IDClientGlobal;
+    socket.emit('zapytanieObstaw', data);
+});
+
 $("#stawkaPlus").click(function() {
         temp = $('#obstawButton').data('stawkaogolna');
         for(var x=0; x <5; x++) { //przechodzimy przez pozycje 
