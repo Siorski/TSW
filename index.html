@@ -47,7 +47,7 @@
                 <div class="stawkaGracza"></div>
                 <div class="wartoscRekiGracza"></div>
             </div>
-             <div id="informacje"> Witamy w grze Blackjack. Kliknij usiądź aby zająć miejsce.</div>
+             <div id="informacje"> Witamy w grze Blackjack.</div>
                 <div id="guzikiStawka">
                     <button id="stawkaMinus" class="btn btn-danger">-</button>
                     <button id="obstawButton" data-stawkaOgolna="5" class="btn btn-primary" >Stawka 5 </button>
@@ -59,13 +59,21 @@
                     <button id="doubledown" class="btn btn-primary">DoubleDown</button>
                 </div>
         </div>
+        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/guziki.js"></script>
+        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/stolWyswietlanie.js"></script>
         <script>
             var IDClientGlobal = -1;
+            var stolGlobal = {};
             var socket = io.connect('http://localhost:8080');
 
             socket.on('id', function(data) {
                 IDClientGlobal = data.id;
             });  
+
+            socket.on('stolAktualizacja', function(stol) {
+                stolGlobal = stol;
+                wyswietlStol();
+            });
         </script>
     </body>
 </h
