@@ -151,6 +151,15 @@ body {
     font-size: 18px;
 }
 
+.karta {
+    position: absolute;
+    width: 76px;
+    height: 118px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 2px solid darkred;
+}
+
 .usiadzButton {
     position: absolute;
     bottom: 10px;

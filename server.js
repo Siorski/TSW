@@ -45,5 +45,24 @@ io.sockets.on('connection', function(socket) {
             } 
             io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
         }
-    });    
+    });  
+
+    socket.on('zapytanieHit', function(data) {
+        if(cyklGry.aktualnyKrok.hit(data)) { //dobieramy karte w aktualnym kroku
+            io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
+        }
+    });
+
+    socket.on('zapytaniePas', function(data) {
+        if(cyklGry.aktualnyKrok.pas(data)) { //pasujemy w aktualnym kroku
+            io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
+        }
+    });
+
+    socket.on('zapytanieDoubleDown', function(data) {
+        if(cyklGry.aktualnyKrok.doubleDown(data)) { //podwajamy stawke w aktualnym kroku
+            io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
+        }
+    });
+  
 });

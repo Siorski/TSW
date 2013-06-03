@@ -33,3 +33,23 @@ $("#stawkaPlus").click(function() {
         $('#obstawButton').text("Stawka " + temp);
         $('#obstawButton').data('stawkaogolna', temp);
 });
+
+$("#hit").click(function() {
+    var data = {};
+    data["clientID"] = IDClientGlobal;
+    socket.emit('zapytanieHit', data);
+});
+
+
+$("#pas").click(function() {
+    var data = {};
+    data["clientID"] = IDClientGlobal;
+    socket.emit('zapytaniePas', data);
+
+});
+
+$("#doubledown").click(function() {
+    var data = {};
+    data["clientID"] = IDClientGlobal;
+    socket.emit('zapytanieDoubleDown', data);
+});

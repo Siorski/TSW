@@ -84,6 +84,9 @@ module.exports = {
         this.stol.wartoscRekiGracza = stol.wartoscRekiGracza;
         this.stol.wartoscRekiKrupiera = cyklGry.wartoscRekiKrupiera;
         this.wszystkieRozdaneKarty();
+        if(typeof this.stol.kartyGracza[0][0] !== 'undefined' && cyklGry.aktualnyKrok.ukryjKartyKrupiera) { //jesli pierwsza karta krupiera nie jest undefined oraz ukryjKartyKrupiera = true
+            this.stol.kartyGracza[0][0] = "XX";  //"zakrywamy" pierwsza karte krupiera
+        }
         return this.stol;
     },
 
@@ -137,5 +140,101 @@ module.exports = {
             }
         }
         return licznikGraczyPozaGra; 
+    },
+
+    rozdaj: function(karty) {
+        this.kartyGracza[0].push(karty.potasowanaTalia.pop()); 
+        this.kartyGracza[0].push(karty.potasowanaTalia.pop()); //dajemy na poczatek dwie karty krupierowi
+        for(var pozycjaGracza = 1; pozycjaGracza < 5; pozycjaGracza++) { //przechodzimy przez pozycje
+            if(this.miejscePrzyStole[pozycjaGracza] === 1 && this.opuszczoneGry[pozycjaGracza] === 0) { //jesli miejsce przy stole jest zajete i gracz nie opuscil rozdania
+                this.kartyGracza[pozycjaGracza].push(karty.potasowanaTalia.pop());    //rowniez rozdajemy mu dwie karty
+                this.kartyGracza[pozycjaGracza].push(karty.potasowanaTalia.pop());
+                this.wartoscRekiGracza[pozycjaGracza-1] = stol.wartoscReki(this.kartyGracza[pozycjaGracza]); //potzebne do wyswietlania wartosci kart gracza
+            }
+        }
+    },
+
+    blokowanieMiejsca: function() {
+        for(var pozycjaGracza = 1; pozycjaGracza < 5; pozycjaGracza++) { 
+            if(this.miejscePrzyStole[pozycjaGracza] === 1 && this.stawkaGracza[pozycjaGracza] === 0) { //jesli miejsce przy stole jest zajete i gracz nic nie postawil
+                this.opuszczoneGry[pozycjaGracza]++;     //zwiekszamy jego ilosc opuszczonych gier
+            }
+        }
+    },
+
+    ustalPierwszegoGracza: function() {
+        for(var i = 1; i < 5; i++) {
+            if(this.miejscePrzyStole[i] === 1 && this.opuszczoneGry[i] === 0) { //szukamy pierwszego miejsca przy stole ktore jest zajete i nie opuscilo rozdania
+                this.aktywnyGracz = i; //staje sie on aktywnym graczem
+                return 1;
+            }
+        }
+        return 0;
+    },
+
+    nastepnyGracz: function() { //przejscie do nastepnego gracza w kolejce
+        nastepnyGraczIndex = parseInt(this.aktywnyGracz) + 1; //indeks nastepnego gracza w kolejce to +1 od aktywnego gracza
+                for(nastepnyGraczIndex; nastepnyGraczIndex < 5; nastepnyGraczIndex++) { //szukaj innego gracza
+                    if(this.miejscePrzyStole[nastepnyGraczIndex] === 1 && this.opuszczoneGry[nastepnyGraczIndex] === 0) { //jesli jest gracz, ktory zajmuje miejsce i nie opuscil rozdania
+                        this.aktywnyGracz = nastepnyGraczIndex; //staje sie on aktywnym graczem
+                        return 1;
+                    }
+                }
+        return 0;
+    },
+    
+    wartoscReki: function(karty) { //funkcja podliczajaca wartosc kart w rece 
+        var wartoscKart = 0;
+        var iloscAsow = 0;
+        if(karty.length > 0) { //jesli sa jakies karty
+            for(var i = 0; i < karty.length; i++) { //przechodzimy przez wszystkie
+                wartoscKart = wartoscKart + this.wartoscKarty(karty[i]); //funkcja wartoscKarty oblicza wartosc konkretnej karty
+                if(this.wartoscKarty(karty[i]) === 11) { //jesli wartoscKarty jest rowna 11 
+                    iloscAsow++; //to zwieszkamy iloscAsow
+                }
+            }
+            while(iloscAsow > 0 && wartoscKart > 21) { //dopoki ilosc asow jest wieksza od 0 oraz wartosc kart jest wieksza od 21 
+                wartoscKart -= 10; //to zmniejszamy wartosc kart o 10 
+                iloscAsow--; //oraz liczbe asow o 1
+            }
+            return wartoscKart;
+        } 
+        else { //jesli nie ma kart zwroc false
+            return 0;
+        }
+    },
+
+    wartoscKarty: function(kartaString) { //funkcja zwracajaca wartosc karty
+        karta = String(kartaString).slice(0, -3); //usuwamy kolor(3 znaki na koncu)
+        if(karta === "A") { //jesli karta jest asem jej wartosc to 11
+            return 11;
+        } 
+        else if(isNaN(karta)) { //jesli karta nie jest numerem (czyli J,D,K) jej wartosc to 10 (isNaN zwraca true jestli cos NIE jest liczba)
+            return 10;  
+        } 
+        else {
+            return parseInt(karta); //w przeciwnym wypadku wartosc karty to jej odpowiednik numeryczny
+        }
+    },
+
+    hit: function(id) {
+        pozycjaGracza = this.pobierzPozycjeGracza(id);
+        if(pozycjaGracza === this.aktywnyGracz && stol.wartoscReki(this.kartyGracza[pozycjaGracza]) <= 21) { //jesli gracz jest aktywnym graczem i wartosc jego kart jest <= 21
+            this.kartyGracza[pozycjaGracza].push(karty.potasowanaTalia.pop()); //dajemy mu jedna karte
+            this.wartoscRekiGracza[pozycjaGracza-1] = stol.wartoscReki(this.kartyGracza[pozycjaGracza]) //wyswietlanie wartosci kart
+            cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
+            return 1;
+        }
+        return 0;
+    },
+
+    doubleDown: function(id) {
+        pozycjaGracza = this.pobierzPozycjeGracza(id);
+        if(pozycjaGracza === this.aktywnyGracz && this.kartyGracza[this.aktywnyGracz].length === 2) { //jesli pozycja gracza to aktywny gracz oraz ilosc kart gracza === 2
+            if(this.obstaw(id, this.stawkaGracza[pozycjaGracza])) { //obstawiamy dana stawke
+                return this.hit(id);  //dajemy jedna karte
+            }
+        }
     }
+
 };

@@ -111,7 +111,78 @@ module.exports = {
             doubleDown: function() {},
             wiadomosc: "Postaw swoją stawkę.",
             czasCzekania: 10000 //ten krok trwa 10 sekund
-        }
+        },
+
+        ruchGracza: { //trzeci krok
+            ruchGraczaZegar: 0,
+            przekroczonyCzasRuchuGracza: function() { //jesli gracz przekroczyl czas na ruch
+                if(stol.nastepnyGracz()) { //przechodzimy do nastepnego gracza
+                    console.log("Przekroczony czas na ruch gracza.");
+                    cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000);  //ustawiamy nowy czas dla nastepnego gracza
+                } 
+                else { //jesli juz nie ma nastepnego gracza wznawiamy porzadek
+                    cyklGry.porzadekWznow();
+                }
+                cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu());
+            },
+            poczatekKroku: function() {
+                stol.blokowanieMiejsca(); //sprawdzamy czy nikt nie blokuje miejsca (siedzi a nie obstawil)
+                stol.rozdaj(karty);     //rozdajemy karty
+                cyklGry.porzadekPauza(); //wstrzymujemy porzadek
+                stol.ustalPierwszegoGracza(); //ustalamy ktory gracz wykonuje pierwszy ruch.
+                cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+            },
+            koniecKroku: function() {},
+            ustalStawke: function() {}, //w tym kroku nie da sie obstawiac
+            dodajGracza: function() {}, //ani dodawac graczy
+            hit: function(data) {
+                var hitSukces = stol.hit(data["clientID"]);  //wykonujemy 'hit'
+                if(hitSukces) { //jesli udalo sie dobrac karte
+                    if(stol.wartoscRekiGracza[stol.aktywnyGracz-1] >= 21) { //jesli po dobraniu karty wartosc reki jest wieksza lub rowna 21
+                        if(stol.nastepnyGracz()) { //przechodzimy do nastepnego gracza
+                            clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
+                            cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                        } 
+                        else { //jesli nie ma nastepnego gracza
+                            clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
+                            cyklGry.porzadekWznow(); //wznawiamy porzadek
+                        }
+                    } 
+                    else { //jesli wartosc reki nadal jest mniejsza od 21
+                        clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); 
+                        cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); // ten sam gracz wykonuje kolejny ruch, znow ma 10 sek
+                    }
+                }
+                return hitSukces;
+            },
+            pas: function() {
+                    if(stol.nastepnyGracz()) { //pzechodzimy do nastepnego gracza
+                        clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
+                        cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                    } 
+                    else { //jesli nie ma nastepnego gracza
+                        clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
+                        cyklGry.porzadekWznow(); //wznawiamy porzadek
+                    }
+            },
+            doubleDown: function(data) {
+                var doubleDownSukces = stol.doubleDown(data["clientID"]); //wykonujemy 'doubleDown'
+                if(doubleDownSukces) { //jesli doubleDown sie udal
+                    if(stol.nastepnyGracz()) { //przechodzimy do nastepnego gracza
+                        clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
+                        cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                    } 
+                    else { //jesli nie ma nastepnego gracza
+                        clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
+                        cyklGry.porzadekWznow(); //wznawiamy porzadek
+                    }
+                }
+                return doubleDownSukces;
+            },
+            ukryjKartyKrupiera: 1,
+            wiadomosc: "Czekanie na ruch graczy.",
+            czasCzekania: 3000
+        },
     }
 };
 
