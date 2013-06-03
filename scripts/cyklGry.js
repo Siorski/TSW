@@ -155,7 +155,9 @@ module.exports = {
                 }
                 return hitSukces;
             },
-            pas: function() {
+            pas: function(data) {
+                var pasSukces = stol.pas(data["clientID"]); 
+                if(pasSukces) { //jesli pas sie udal
                     if(stol.nastepnyGracz()) { //pzechodzimy do nastepnego gracza
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
                         cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
@@ -164,6 +166,8 @@ module.exports = {
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
                         cyklGry.porzadekWznow(); //wznawiamy porzadek
                     }
+                }
+                return pasSukces;
             },
             doubleDown: function(data) {
                 var doubleDownSukces = stol.doubleDown(data["clientID"]); //wykonujemy 'doubleDown'
@@ -182,7 +186,7 @@ module.exports = {
             ukryjKartyKrupiera: 1,
             wiadomosc: "Czekanie na ruch graczy.",
             czasCzekania: 3000
-        },
+        }
     }
 };
 

@@ -228,6 +228,10 @@ module.exports = {
         return 0;
     },
 
+    pas: function(id) {
+        return(this.pobierzPozycjeGracza(id) === this.aktywnyGracz);    //ustalamy aktywnego gracza
+    },
+
     doubleDown: function(id) {
         pozycjaGracza = this.pobierzPozycjeGracza(id);
         if(pozycjaGracza === this.aktywnyGracz && this.kartyGracza[this.aktywnyGracz].length === 2) { //jesli pozycja gracza to aktywny gracz oraz ilosc kart gracza === 2

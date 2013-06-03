@@ -45,7 +45,6 @@ $("#pas").click(function() {
     var data = {};
     data["clientID"] = IDClientGlobal;
     socket.emit('zapytaniePas', data);
-
 });
 
 $("#doubledown").click(function() {
