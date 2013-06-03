@@ -142,6 +142,19 @@ module.exports = {
         return licznikGraczyPozaGra; 
     },
 
+    sprawdzCzyKtosGra: function() {                  
+        for(var pozycjaGracza = 1; pozycjaGracza < 5; pozycjaGracza++) { //przechodzimy przez pozycje
+            if(this.miejscePrzyStole[pozycjaGracza] === 1) {    //jesli jakiej miejsce jest zajete
+                if(this.opuszczoneGry[pozycjaGracza] === 0 ) { //i gracz nie opuscil rozdania
+                    if(stol.wartoscReki(this.kartyGracza[pozycjaGracza])<=21) { // oraz wartosc jego kart jest mniejsza do 21 to znaczy ze czeka na ruch krupiera
+                        return 1;
+                    }
+                }
+            }
+        }
+        return 0;
+    },
+
     rozdaj: function(karty) {
         this.kartyGracza[0].push(karty.potasowanaTalia.pop()); 
         this.kartyGracza[0].push(karty.potasowanaTalia.pop()); //dajemy na poczatek dwie karty krupierowi
@@ -240,5 +253,4 @@ module.exports = {
             }
         }
     }
-
 };

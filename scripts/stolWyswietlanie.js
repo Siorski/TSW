@@ -5,6 +5,7 @@ function wyswietlStol() {
     wyswietlanieGuzikow();
     wyswietlanieStawek();
     wyswietlanieWartosciKartGracza();
+    wyswietlanieWartosciKartKrupiera();
 }
 
 function wyswietlanieKart() {
@@ -80,4 +81,14 @@ function wyswietlanieStawek() {
             $(this).text(stolGlobal.stawkaGracza[index + 1]);
         }
     });
+}
+
+function wyswietlanieWartosciKartKrupiera(){
+    if(stolGlobal.wartoscRekiKrupiera === 0){ //jesli wartoscRekiKrupiera jest rowna 0 to
+        $(".wartoscRekiKrupiera").hide(); //nie wyswietlamy nic
+    }
+    else {  //w przeciwnym wypadku
+        $(".wartoscRekiKrupiera").show(); //wyswietlamy wartosc
+        $(".wartoscRekiKrupiera").text("Wartosc kart: " + stolGlobal.wartoscRekiKrupiera);
+    }
 }

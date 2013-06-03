@@ -183,8 +183,51 @@ module.exports = {
                 }
                 return doubleDownSukces;
             },
-            ukryjKartyKrupiera: 1,
+            ukryjKartyKrupiera: 1, //zakrywamy 1 karte krupiera
             wiadomosc: "Czekanie na ruch graczy.",
+            czasCzekania: 3000
+        },
+
+        ruchKrupiera: { //czwarty krok
+            akcjaKrupiera: function() {
+                if(stol.wartoscReki(stol.kartyGracza[0] === 21)) { //jesli krupier ma BlackJacka
+                    cyklGry.wartoscRekiKrupiera = 21; //ustawiamy wartosc do wyswietlenia na 21
+                    console.log("Krupier ma blackjacka");
+                    this.porzadekIndex = 4; //przechodzimy do podsumowania
+                }
+                if(stol.wartoscReki(stol.kartyGracza[0]) < 17) { //jesli krupiera ma mniej niż 17
+                    stol.kartyGracza[0].push(karty.potasowanaTalia.pop()); //dobiera karte
+                    cyklGry.wartoscRekiKrupiera = stol.wartoscReki(stol.kartyGracza[0]); // potrzebne do wyswietlenia
+                    cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
+                    setTimeout(cyklGry.aktualnyKrok.akcjaKrupiera, 2000); //czekamy 2 sekundy i powtarzamy krok
+                } 
+                else { //jesli krupier ma wiecej niz 16 to nie dobiera juz kart
+                    cyklGry.wartoscRekiKrupiera = stol.wartoscReki(stol.kartyGracza[0]); //potrzebne do wyswietlenia
+                    cyklGry.porzadekWznow(); //wznawiamy porzadek
+                }
+            },
+            poczatekKroku: function() {
+                stol.aktywnyGracz = 0;
+                cyklGry.wartoscRekiKrupiera = stol.wartoscReki(stol.kartyGracza[0]);
+                if(stol.sprawdzCzyKtosGra()) { //jesli sa gracze nadal pozostajacy w grze
+                    cyklGry.porzadekPauza(); //wstrzymujemy porzadek
+                    cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
+                    setTimeout(cyklGry.aktualnyKrok.akcjaKrupiera, 2000); //wywolanie akcji krupiera po 2 sekundach
+                }
+            },
+            koniecKroku: function() {
+                if(karty.wymaganeTasowanie()) { //jesli karty wymagaja tasowania
+                    karty.nowaTalia(); //tasujemy
+                    console.log("Krupier tasuje karty.");
+                }
+            },
+            ustalStawke: function() {}, //w tym kroku zadna opcja nie jest mozliwa
+            dodajGracza: function() {},
+            hit: function(data) {},
+            pas: function() {},
+            doubleDown: function() {},
+            ukryjKartyKrupiera: 0, //pokazujemy karty krupiera
+            wiadomosc: "Ruch krupiera.",
             czasCzekania: 3000
         }
     }
