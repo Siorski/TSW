@@ -29,6 +29,11 @@ io.sockets.on('connection', function(socket) {
 
 	socket.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu());    
     
+    socket.on("disconnect", function(){
+        stol.usunGracza(socket.id); //usuwamy gracza ze stolu
+        io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
+    });
+
     socket.on('zapytanieDodajGracza', function(data) {
         if(cyklGry.aktualnyKrok.dodajGracza(stol, data)) { //dodawanie gracza w aktualnym kroku powiodlo sie
             if(!cyklGry.porzadekTrwa) { //jesli porzadek jest zatrzymany

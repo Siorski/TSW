@@ -73,8 +73,8 @@ module.exports = {
             poczatekKroku: function() {},
             koniecKroku: function() {},
             ustalStawke: function() {},
-            dodajGracza: function(stol, requestData) {
-                return stol.dodajGracza(requestData["clientID"], requestData["pozadaneMiejsce"]);
+            dodajGracza: function(stol, data) {
+                return stol.dodajGracza(data["clientID"], data["pozadaneMiejsce"]);
             },
             hit: function() {},
             pas: function() {},
@@ -105,7 +105,9 @@ module.exports = {
                     return 1;
                 }
             },
-            dodajGracza: function() {}, //dodawanie graczy w tym kroku nie jest mozliwe
+            dodajGracza: function(stol, data) { //mozna dochodzic takze w trakcie obstawiania
+                return stol.dodajGracza(data["clientID"], data["pozadaneMiejsce"]);
+            }, 
             hit: function() {}, //podobnie jak wszystkie akcje z kartami
             pas: function() {},
             doubleDown: function() {},
