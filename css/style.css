@@ -79,7 +79,7 @@ body {
     height: 125px;
 }
 
-#nazwaGracza {
+.nazwaGracza {
     position: absolute;
     bottom: -25px;   
     left: 15px;

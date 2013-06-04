@@ -1,3 +1,9 @@
+/*jshint node: true */
+/*jshint sub: true */
+/*global $:false, stolGlobal:false */
+/*exported wyswietlStol*/
+
+'use strict';
 function wyswietlStol() {
     wyswietlanieKart();
     wyswietlanieInformacji();    

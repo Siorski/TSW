@@ -1,3 +1,9 @@
+/*jshint node: true */
+/*jshint sub: true */
+/*global cyklGry:false, stol:false, karty:false */
+
+'use strict';
+
 module.exports = {
     porzadekTrwa: 0, 
     porzadek: ["czekanieNaGraczy", "przyjmowanieStawek", "ruchGracza", "ruchKrupiera", "podsumowanie"], //kolejne kroki porzadku gry
@@ -85,12 +91,13 @@ module.exports = {
 
         przyjmowanieStawek: { //drugi krok
             obstawianieStawekZegar: 0,
+            licznikGraczyPrzyStole: 0,
             usunGraczyPoCzasie: function() {
                 stol.usunWszystkichGraczy(); //po uplywie 30 sekund wszystkich usuwamy ze stolu i 
                 stol.resetStolu(); //resetujemy wszystkie wlasciwosci stolu
                 cyklGry.porzadekReset(); // oraz porzadek
                 cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
-                console.log("Przekroczono czas na przyjmowanie stawek. Usunięto wszystkich graczy.")
+                console.log("Przekroczono czas na przyjmowanie stawek. Usunięto wszystkich graczy.");
             },
             poczatekKroku: function() {
                // cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
@@ -252,7 +259,7 @@ module.exports = {
             },
             ustalStawke: function() {}, //w tym kroku zadna opcja nie jest mozliwa
             dodajGracza: function() {},
-            hit: function(data) {},
+            hit: function() {},
             pas: function() {},
             doubleDown: function() {},
             ukryjKartyKrupiera: 0, //pokazujemy karty krupiera

@@ -1,3 +1,9 @@
+/*jshint node: true */
+/*jshint sub: true */
+/*global cyklGry:false, stol:false, karty:false */
+
+'use strict';
+
 module.exports = {
     stol: {},
     zetonyPoczatkowe: 300,
@@ -35,7 +41,9 @@ module.exports = {
            // this.iloscGraczy++; //zwiekszamy liczbe graczy
             return 1;
         } 
-        else return 0;
+        else {
+            return 0;
+        }
     },
 
    ustalStawke: function(id, stawka) {
@@ -189,7 +197,7 @@ module.exports = {
     },
 
     nastepnyGracz: function() { //przejscie do nastepnego gracza w kolejce
-        nastepnyGraczIndex = parseInt(this.aktywnyGracz) + 1; //indeks nastepnego gracza w kolejce to +1 od aktywnego gracza
+        var nastepnyGraczIndex = parseInt(this.aktywnyGracz, 10) + 1; //indeks nastepnego gracza w kolejce to +1 od aktywnego gracza
                 for(nastepnyGraczIndex; nastepnyGraczIndex < 5; nastepnyGraczIndex++) { //szukaj innego gracza
                     if(this.miejscePrzyStole[nastepnyGraczIndex] === 1 && this.opuszczoneGry[nastepnyGraczIndex] === 0) { //jesli jest gracz, ktory zajmuje miejsce i nie opuscil rozdania
                         this.aktywnyGracz = nastepnyGraczIndex; //staje sie on aktywnym graczem
@@ -234,7 +242,7 @@ module.exports = {
     },
 
     wartoscKarty: function(kartaString) { //funkcja zwracajaca wartosc karty
-        karta = String(kartaString).slice(0, -3); //usuwamy kolor(3 znaki na koncu)
+        var karta = String(kartaString).slice(0, -3); //usuwamy kolor(3 znaki na koncu)
         if(karta === "A") { //jesli karta jest asem jej wartosc to 11
             return 11;
         } 
@@ -242,15 +250,15 @@ module.exports = {
             return 10;  
         } 
         else {
-            return parseInt(karta); //w przeciwnym wypadku wartosc karty to jej odpowiednik numeryczny
+            return parseInt(karta, 10); //w przeciwnym wypadku wartosc karty to jej odpowiednik numeryczny
         }
     },
 
     hit: function(id) {
-        pozycjaGracza = this.pobierzPozycjeGracza(id);
+        var pozycjaGracza = this.pobierzPozycjeGracza(id);
         if(pozycjaGracza === this.aktywnyGracz && stol.wartoscReki(this.kartyGracza[pozycjaGracza]) <= 21) { //jesli gracz jest aktywnym graczem i wartosc jego kart jest <= 21
             this.kartyGracza[pozycjaGracza].push(karty.potasowanaTalia.pop()); //dajemy mu jedna karte
-            this.wartoscRekiGracza[pozycjaGracza-1] = stol.wartoscReki(this.kartyGracza[pozycjaGracza]) //wyswietlanie wartosci kart
+            this.wartoscRekiGracza[pozycjaGracza-1] = stol.wartoscReki(this.kartyGracza[pozycjaGracza]); //wyswietlanie wartosci kart
             cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
             return 1;
         }
@@ -262,7 +270,7 @@ module.exports = {
     },
 
     doubleDown: function(id) {
-        pozycjaGracza = this.pobierzPozycjeGracza(id);
+        var pozycjaGracza = this.pobierzPozycjeGracza(id);
         if(pozycjaGracza === this.aktywnyGracz && this.kartyGracza[this.aktywnyGracz].length === 2) { //jesli pozycja gracza to aktywny gracz oraz ilosc kart gracza === 2
             if(this.obstaw(id, this.stawkaGracza[pozycjaGracza])) { //obstawiamy drugi raz ta sama stawke
                 return this.hit(id);  //dajemy jedna karte
