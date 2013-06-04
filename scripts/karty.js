@@ -38,6 +38,7 @@ module.exports = { //sprawia ze funkcje sa widoczne poza tym plikiem, dekalarcja
     wymaganeTasowanie: function() { //zwraca true jesli ilosc kart w potasowanejTalii jest mniejsza niz 1/3 wszystkich kart
         if(this.potasowanaTalia.length < (52 * this.iloscTalii * 0.33)){
             console.log("Wymagane tasowanie kart.")
+            return 1;
         }
         else {
             return 0;

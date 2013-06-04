@@ -32,7 +32,7 @@ module.exports = {
             this.pozycjaClientID[pozadaneMiejsce] = id; //przypisujemy id do tablicy pozycjaClientID
             this.miejscePrzyStole[pozadaneMiejsce] = 1; //miejsce przy stole oznaczamy jako zajete
             this.zetonyGracza[pozadaneMiejsce] = this.zetonyPoczatkowe; //dajemy graczowi zetony poczatkowe
-            this.iloscGraczy++; //zwiekszamy liczbe graczy
+           // this.iloscGraczy++; //zwiekszamy liczbe graczy
             return 1;
         } 
         else return 0;
@@ -96,7 +96,9 @@ module.exports = {
         this.miejscePrzyStole[pozycjaGracza] = 0; //zwalniamy miejsce przy stole
         this.opuszczoneGry[pozycjaGracza] = 0; //zerujemy opuszczoneGry
         this.stawkaGracza[pozycjaGracza] = 0;  //zerujemy stawkeGracza
-        this.iloscGraczy--; //zmniejszamy ilosc graczy
+        if( this.iloscGraczy > 0) {
+            this.iloscGraczy--; //zmniejszamy ilosc graczy
+        }
     },
 
     usunWszystkichGraczy: function() {

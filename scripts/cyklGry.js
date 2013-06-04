@@ -21,7 +21,7 @@ module.exports = {
         this.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
     },
     
-    porzadekReset: function() { 
+    porzadekReset: function() { //funkcja wywolywana w momencie gdy wszyscy gracze przekroczyli czas na obstawianie stawek
         this.porzadekIndex = 0; //ustawiamy index kroku w porzadku na 0
         cyklGry.ustalKrok(this.porzadek[this.porzadekIndex]);  //ustalamy krok od tego indeksu
         stol.ustawWiadomosc(cyklGry.pobierzWiadomosc()); //ustawiamy odpowiednia wiadomosc
@@ -50,7 +50,7 @@ module.exports = {
         if(this.porzadekTrwa){ // jesli porzadek trwa
             setTimeout(function() {
                 cyklGry.przejdzDoNastepnegoKroku();
-            }, cyklGry.pobierzCzasCzekania() );  //metoda setTimeout wykona funkcje (podana jako pierwszy parametr) czekajac okreslona ilosc czasu (podana jako drugi parametr)
+            }, cyklGry.pobierzCzasCzekania() );  //metoda setTimeout wykona funkcje (podana jako pierwszy parametr) po uplywie okreslonej ilosci czasu (drugi parametr)
         }
         this.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
     },
@@ -60,7 +60,7 @@ module.exports = {
         if(this.porzadekTrwa) { //jesli porzadek trwa
             this.porzadekIndex++; //przechodzimy do nastepnego kroku w porzadku
             if(this.porzadekIndex === this.porzadek.length) { //jesli ten krok to ostatni krok (czyli rozdanie sie skonczylo)
-                this.porzadekIndex = 0; //wracamy na poczatek porzadku
+                this.porzadekIndex = 1; //wracamy do obstawiania stawek
             }
             cyklGry.ustalKrok(this.porzadek[this.porzadekIndex]); //jesli krok nie jest ostatnim to ustalamy krok na kolejny w porzadku
             this.krok();   
@@ -92,12 +92,34 @@ module.exports = {
                 cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
                 console.log("Przekroczono czas na przyjmowanie stawek. Usunięto wszystkich graczy.")
             },
-            poczatekKroku: function() {},
+            poczatekKroku: function() {
+               // cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
+                for(var x=1; x<5; x++){             //przechodzimy przez pozycje
+                    if(stol.miejscePrzyStole[x] === 1) //jesli miejsce przy stole jest zajete
+                    {
+                        this.licznikGraczyPrzyStole++; //zwiekszamy ilosc graczy przy stole
+                    }
+                }
+                if (this.licznikGraczyPrzyStole === 0 ) { //jesli nie ma graczy przy stole (sa sami "obserwatorzy")
+                    stol.resetStolu();  //resetujemy stol
+                    cyklGry.porzadekPauza();    //zatrzymujemy porzadek
+                    cyklGry.porzadekReset();    //oraz resetujemy go
+                    cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
+                }
+                this.licznikGraczyPrzyStole = 0; //resetujemy liczbe graczy przy stole
+            },
             koniecKroku: function() {
-                if(stol.graczePozaGra() && (stol.graczePozaGra() === stol.iloscGraczy)) { //jesli wszyscy gracze nie biora udzialu w rozdaniu
+                for(var x=1; x<5; x++){             //przechodzimy przez pozycje
+                    if(stol.miejscePrzyStole[x] === 1) //jesli miejsce przy stole jest zajete
+                    {
+                        this.licznikGraczyPrzyStole++; //zwiekszamy ilosc graczy przy stole
+                    }
+                }
+                if(stol.graczePozaGra() && (stol.graczePozaGra() === this.licznikGraczyPrzyStole)) { //jesli wszyscy gracze siedzacy przy stole nie biora udzialu w rozdaniu
                     cyklGry.porzadekPauza(); //zatrzymujemy porzadek
                     cyklGry.aktualnyKrok.obstawianieStawekZegar = setTimeout(this.usunGraczyPoCzasie, 30000); // po 30 sekundach usuwani sa wszyscy gracze
                 }
+                this.licznikGraczyPrzyStole = 0; //resetujemy liczbe graczy przy stole
             },
             ustalStawke: function(data) {
                 if(stol.ustalStawke(data["clientID"], data["stawka"])) {
@@ -133,6 +155,7 @@ module.exports = {
                 cyklGry.porzadekPauza(); //wstrzymujemy porzadek
                 stol.ustalPierwszegoGracza(); //ustalamy ktory gracz wykonuje pierwszy ruch.
                 cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                stol.ustawWiadomosc("Aktualnie ruch wykonuje gracz nr: " + stol.aktywnyGracz); //wyswietlanie informacji o aktywnym graczu
             },
             koniecKroku: function() {},
             ustalStawke: function() {}, //w tym kroku nie da sie obstawiac
@@ -144,6 +167,7 @@ module.exports = {
                         if(stol.nastepnyGracz()) { //przechodzimy do nastepnego gracza
                             clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
                             cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                            stol.ustawWiadomosc("Aktualnie ruch wykonuje gracz nr: " + stol.aktywnyGracz); //wyswietlanie informacji o aktywnym graczu
                         } 
                         else { //jesli nie ma nastepnego gracza
                             clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
@@ -153,6 +177,7 @@ module.exports = {
                     else { //jesli wartosc reki nadal jest mniejsza od 21
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); 
                         cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); // ten sam gracz wykonuje kolejny ruch, znow ma 10 sek
+                        stol.ustawWiadomosc("Aktualnie ruch wykonuje gracz nr: " + stol.aktywnyGracz); //wyswietlanie informacji o aktywnym graczu
                     }
                 }
                 return hitSukces;
@@ -163,6 +188,7 @@ module.exports = {
                     if(stol.nastepnyGracz()) { //pzechodzimy do nastepnego gracza
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
                         cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                        stol.ustawWiadomosc("Aktualnie ruch wykonuje gracz nr: " + stol.aktywnyGracz); //wyswietlanie informacji o aktywnym graczu
                     } 
                     else { //jesli nie ma nastepnego gracza
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
@@ -177,6 +203,7 @@ module.exports = {
                     if(stol.nastepnyGracz()) { //przechodzimy do nastepnego gracza
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza
                         cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000); //gracz ma 10 sek na ruch
+                        stol.ustawWiadomosc("Aktualnie ruch wykonuje gracz nr: " + stol.aktywnyGracz); //wyswietlanie informacji o aktywnym graczu
                     } 
                     else { //jesli nie ma nastepnego gracza
                         clearTimeout(cyklGry.aktualnyKrok.ruchGraczaZegar); //zerujemy czas na ruch gracza

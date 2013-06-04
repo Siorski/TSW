@@ -23,6 +23,9 @@ cyklGry = require('./scripts/cyklGry.js');
 cyklGry.ustalKrok('czekanieNaGraczy'); //musimy ustalic krok na poczatek
 
 io.sockets.on('connection', function(socket) {
+
+    stol.iloscGraczy++; //kazde nowe polaczenie zwieksza liczbe graczy
+
     socket.emit('id', {
         id: socket.id
     });
