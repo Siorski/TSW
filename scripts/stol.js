@@ -125,6 +125,7 @@ module.exports = {
         this.stawkaGracza = [0, 0, 0, 0, 0]; //resetujemy stawki graczy
         this.kartyGracza = [ [  ], [  ], [  ], [  ], [  ] ]; //ich karty
         this.wartoscRekiGracza = [0, 0, 0, 0]; //oraz wartosci kart graczy
+        cyklGry.wartoscRekiKrupiera = 0; //resetujemy rowniez wartoscRekiKrupiera
     },
 
     graczePozaGra: function() { //zwracamy liczbe graczy nie bioracych udzial w rozdaniu
@@ -195,6 +196,19 @@ module.exports = {
                 }
         return 0;
     },
+
+    wyplata: function() {
+        for(var pozycjaGracza = 1; pozycjaGracza < 5; pozycjaGracza++) { //przechodzimy przez miejsca przy stole
+            if(stol.miejscePrzyStole[pozycjaGracza] === 1) {   //jesli jakies miejsce jest zajete
+                if( (this.wartoscReki(stol.kartyGracza[pozycjaGracza]) > cyklGry.wartoscRekiKrupiera && this.wartoscReki(stol.kartyGracza[pozycjaGracza]) <= 21) || (this.wartoscReki(stol.kartyGracza[pozycjaGracza]) <= 21 && cyklGry.wartoscRekiKrupiera > 21)) { //warunki wygranej gracza
+                    stol.zetonyGracza[pozycjaGracza] = stol.zetonyGracza[pozycjaGracza] + (2 * stol.stawkaGracza[pozycjaGracza]); //gracz dostaje 2 razy tyle ile postawil
+                } 
+                else if (this.wartoscReki(stol.kartyGracza[pozycjaGracza]) === cyklGry.wartoscRekiKrupiera) { //jesli jest remis
+                    stol.zetonyGracza[pozycjaGracza] = stol.zetonyGracza[pozycjaGracza] + stol.stawkaGracza[pozycjaGracza]; //gracz dostaje zwrot swoich postawionych zetonow
+                }
+            }
+        }
+    },
     
     wartoscReki: function(karty) { //funkcja podliczajaca wartosc kart w rece 
         var wartoscKart = 0;
@@ -248,7 +262,7 @@ module.exports = {
     doubleDown: function(id) {
         pozycjaGracza = this.pobierzPozycjeGracza(id);
         if(pozycjaGracza === this.aktywnyGracz && this.kartyGracza[this.aktywnyGracz].length === 2) { //jesli pozycja gracza to aktywny gracz oraz ilosc kart gracza === 2
-            if(this.obstaw(id, this.stawkaGracza[pozycjaGracza])) { //obstawiamy dana stawke
+            if(this.obstaw(id, this.stawkaGracza[pozycjaGracza])) { //obstawiamy drugi raz ta sama stawke
                 return this.hit(id);  //dajemy jedna karte
             }
         }

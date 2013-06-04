@@ -40,7 +40,6 @@ $("#hit").click(function() {
     socket.emit('zapytanieHit', data);
 });
 
-
 $("#pas").click(function() {
     var data = {};
     data["clientID"] = IDClientGlobal;

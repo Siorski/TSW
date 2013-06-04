@@ -229,7 +229,23 @@ module.exports = {
             ukryjKartyKrupiera: 0, //pokazujemy karty krupiera
             wiadomosc: "Ruch krupiera.",
             czasCzekania: 3000
-        }
+        },
+
+        podsumowanie: { //ostatni, piaty krok
+            poczatekKroku: function() {},
+            koniecKroku: function() {
+                stol.wyplata(); //wyznaczanie zwyciezcow oraz wyplata wygranych
+                stol.resetStolu(); //resetujemy stol 
+            },
+            ustalStawke: function() {}, //w tym kroku zadna opcja nie jest mozliwa
+            dodajGracza: function() {},
+            hit: function() {},
+            pas: function() {},
+            doubleDown: function() {},
+            ukryjKartyKrupiera: 0,
+            wiadomosc: "Wypłacanie wygranych dla zwycięzców.",
+            czasCzekania: 3000
+        } 
     }
 };
 
