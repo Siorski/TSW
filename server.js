@@ -16,6 +16,7 @@ var server = http.createServer(function(request, response) {
  }).listen(8080);
 
 var io = require("socket.io").listen(server);
+io.set('log level', 1); //logi w konsoli
 karty = require('./scripts/karty.js'); //dostep do funkcji w skrypcie karty.js (mozliwy dzieki module.exports)
 karty.nowaTalia(); //tworzymy karty do gry
 stol = require('./scripts/stol.js');

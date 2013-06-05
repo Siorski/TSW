@@ -100,8 +100,7 @@ module.exports = {
                 console.log("Przekroczono czas na przyjmowanie stawek. Usunięto wszystkich graczy.");
             },
             poczatekKroku: function() {
-               // cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //odswiezamy stol
-                for(var x=1; x<5; x++){             //przechodzimy przez pozycje
+                for(var x=1; x<5; x++) {             //przechodzimy przez pozycje
                     if(stol.miejscePrzyStole[x] === 1) //jesli miejsce przy stole jest zajete
                     {
                         this.licznikGraczyPrzyStole++; //zwiekszamy ilosc graczy przy stole
@@ -121,6 +120,12 @@ module.exports = {
                     {
                         this.licznikGraczyPrzyStole++; //zwiekszamy ilosc graczy przy stole
                     }
+                }
+                 if (this.licznikGraczyPrzyStole === 0 ) { //jesli nie ma graczy przy stole (sa sami "obserwatorzy")
+                    stol.resetStolu();  //resetujemy stol
+                    cyklGry.porzadekPauza();    //zatrzymujemy porzadek
+                    cyklGry.porzadekReset();    //oraz resetujemy go
+                    cyklGry.io.sockets.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu()); //aktualizujemy stol
                 }
                 if(stol.graczePozaGra() && (stol.graczePozaGra() === this.licznikGraczyPrzyStole)) { //jesli wszyscy gracze siedzacy przy stole nie biora udzialu w rozdaniu
                     cyklGry.porzadekPauza(); //zatrzymujemy porzadek
@@ -149,6 +154,7 @@ module.exports = {
             przekroczonyCzasRuchuGracza: function() { //jesli gracz przekroczyl czas na ruch
                 if(stol.nastepnyGracz()) { //przechodzimy do nastepnego gracza
                     console.log("Przekroczony czas na ruch gracza.");
+                    stol.ustawWiadomosc("Aktualnie ruch wykonuje gracz nr: " + stol.aktywnyGracz); //wyswietlanie informacji o aktywnym graczu
                     cyklGry.aktualnyKrok.ruchGraczaZegar = setTimeout(cyklGry.aktualnyKrok.przekroczonyCzasRuchuGracza, 10000);  //ustawiamy nowy czas dla nastepnego gracza
                 } 
                 else { //jesli juz nie ma nastepnego gracza wznawiamy porzadek
