@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
         <title>Blackjack</title>
-        <link rel="stylesheet" type="text/css" href="http://sigma.ug.edu.pl/~ksiora/blackjack/bootstrap.css" >
-        <link rel="stylesheet" type="text/css" href="http://sigma.ug.edu.pl/~ksiora/blackjack/style.css" >
-        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/jquery-1.9.1.js"></script>
-        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/socket.io.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css" >
+        <link rel="stylesheet" type="text/css" href="css/style.css" >
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body>
@@ -59,12 +59,13 @@
                     <button id="doubledown" class="btn btn-primary">DoubleDown</button>
                 </div>
         </div>
-        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/guziki.js"></script>
-        <script src="http://sigma.ug.edu.pl/~ksiora/blackjack/stolWyswietlanie.js"></script>
+        <script src="scripts/guziki.js"></script>
+        <script src="scripts/stolWyswietlanie.js"></script>
         <script>
             var IDClientGlobal = -1;
             var stolGlobal = {};
             var socket = io.connect(window.location.hostname);
+
 
             socket.on('id', function(data) {
                 IDClientGlobal = data.id;

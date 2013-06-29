@@ -1,26 +1,26 @@
-var http = require("http"),
- fs = require("fs"),
- index;
+var http = require("http");
+var express = require('express');
+var app = express();
+var path = require('path');
 
-fs.readFile("./index.html", function (err, data) {
-    if (err) {
-        throw err;
-    }
-    index = data;
- });
+app.configure(function () {
+    app.set('port', process.env.PORT || 8080);
+    app.use(express.static(path.join(__dirname, 'public')));
+});
 
-var server = http.createServer(function(request, response) {
- response.writeHeader(200, {"Content-Type": "text/html"});
- response.write(index);
- response.end();
- }).listen(8080);
+
+app.get('/', function (req, res) {
+    res.sendfile(__dirname + '/public/index.html');
+});
+
+var server = http.createServer(app).listen(app.get('port'));
 
 var io = require("socket.io").listen(server);
 io.set('log level', 1); //logi w konsoli
-karty = require('./scripts/karty.js'); //dostep do funkcji w skrypcie karty.js (mozliwy dzieki module.exports)
+karty = require('./public/scripts/karty.js'); //dostep do funkcji w skrypcie karty.js (mozliwy dzieki module.exports)
 karty.nowaTalia(); //tworzymy karty do gry
-stol = require('./scripts/stol.js');
-cyklGry = require('./scripts/cyklGry.js');
+stol = require('./public/scripts/stol.js');
+cyklGry = require('./public/scripts/cyklGry.js');
 cyklGry.ustalKrok('czekanieNaGraczy'); //musimy ustalic krok na poczatek
 
 io.sockets.on('connection', function(socket) {
@@ -31,7 +31,7 @@ io.sockets.on('connection', function(socket) {
         id: socket.id
     });
 
-	socket.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu());    
+	socket.emit('stolAktualizacja', stol.pobierzAktualnyStanStolu());   //serwer wyswietla aktualny stan stolu
     
     socket.on("disconnect", function(){
         stol.usunGracza(socket.id); //usuwamy gracza ze stolu

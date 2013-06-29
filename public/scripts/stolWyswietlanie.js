@@ -29,7 +29,7 @@ function kartyNaStol(divCss, pozycjaGracza) {
     } //wstawiamy div karta przesuwajaca kazda kolejna karte aby nie nachodzily na siebie
     $(".karta").each(function() {   //przechodzimy teraz przez wszystkie divy karta
         var nazwaKarty = String($(this).data('karta')); //pobieranie nazwy karty, (div karta ma atrybut data gdzie jest zapisana nazwa 4 znakowa, 1 znak oznacza figure, pozostale 3 kolor)
-        $(this).css("background-image", 'url(http://sigma.inf.ug.edu.pl/~ksiora/obrazki/karty/' + nazwaKarty + '.png)');
+        $(this).css("background-image", 'url(obrazki/karty/' + nazwaKarty + '.png)');
     });
 }
 
